@@ -1,9 +1,9 @@
 const Web3 = require('web3')
-const SimpleStore = require('./src/contracts/SimpleStore.json')
+const SimpleStore = require('./build/contracts/SimpleStore.json')
 const {
   LoomProvider, Client,
   Contract, Address, LocalAddress, CryptoUtils
-} = require('loom-js')
+} = require ('loom-js')
 
 const privateKey = CryptoUtils.generatePrivateKey()
 const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey)
@@ -14,30 +14,32 @@ const client = new Client(
   'ws://127.0.0.1:46658/websocket',
   'ws://127.0.0.1:46658/queryws',
 )
+const main = async() =>  {
+  // The address for the caller of the function
+  const from = LocalAddress.fromPublicKey(publicKey).toString()
+  console.log("from = " + from);
 
-// The address for the caller of the function
-const from = LocalAddress.fromPublicKey(publicKey).toString()
+  // Instantiate web3 client using LoomProvider
+  const web3 = new Web3(new LoomProvider(client, privateKey))
 
-// Instantiate web3 client using LoomProvider
-const web3 = new Web3(new LoomProvider(client, privateKey))
+  // const contractAddress = '0x62C436B6f3f028cF1eb14BDBBc0eaF0c63f62B0E'
+  const contractAddress = SimpleStore.networks["13654820909954"].address;
 
-// const ABI = [{"anonymous":false,"inputs":[{"indexed":false,"name":"_value","type":"uint256"}],"name":"NewValueSet","type":"event"},{"constant":false,"inputs":[{"name":"_value","type":"uint256"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"get","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]
+  console.log(contractAddress);
+  // Instantiate the contract and let it ready to be used
+  const contract = new web3.eth.Contract(SimpleStore.abi, contractAddress, {from})
+  await contract.set(47, {from});
+  // Set the value 47
+  // await contract.methods.set(47).send({from })
+  // Get the value 47
+  // await contract.methods.get().call({from : from},(error,result)=>{
+  //   console.log("result =  \n" + result);
+  // })
 
-const contractAddress = '0x62C436B6f3f028cF1eb14BDBBc0eaF0c63f62B0E'
+  // contract.events.NewValueSet({}, (error, event) => {
+  //   console.log('New value set', event)
+  // })
+  // .on('error',console.error)// The address for the caller of the function
+}
 
-// Instantiate the contract and let it ready to be used
-const contract = new web3.eth.Contract(SimpleStore.abi, contractAddress, {from})
-
-// Set the value 47
-const tx =  contract.methods.set(47).send()
-console.log("asdasd")
-// Get the value 47
-const value =  contract.methods.get().call()
-
-contract.events.NewValueSet({}, (err, event) => {
-  if (err) {
-    return console.error(err)
-  }
-
-  console.log('New value set', event.returnValues._value)
-})
+main();

@@ -13,10 +13,11 @@
   "dependencies": {
     "loom-js": "^1.51.1",
     "loom-truffle-provider": "^0.13.0",
-    "truffle": "^5.0.0"
+    "nodemon": "^1.19.0",
+    "truffle": "^5.0.0",
+    "web3": "^1.0.0-beta.55"
   },
   "devDependencies": {
-    "protoc": "^1.0.3",
-    "web3": "^1.0.0-beta.55"
+    "protoc": "^1.0.3"
   }
 }
