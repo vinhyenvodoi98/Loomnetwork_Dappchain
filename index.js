@@ -28,18 +28,18 @@ const main = async() =>  {
   console.log(contractAddress);
   // Instantiate the contract and let it ready to be used
   const contract = new web3.eth.Contract(SimpleStore.abi, contractAddress, {from})
-  await contract.set(47, {from});
+  // await contract.set(47, {from});
   // Set the value 47
-  // await contract.methods.set(47).send({from })
+  await contract.methods.set(30).send({from })
   // Get the value 47
-  // await contract.methods.get().call({from : from},(error,result)=>{
-  //   console.log("result =  \n" + result);
-  // })
+  await contract.methods.get().call({from : from},(error,result)=>{
+    console.log("result = " + result);
+  })
 
-  // contract.events.NewValueSet({}, (error, event) => {
-  //   console.log('New value set', event)
-  // })
-  // .on('error',console.error)// The address for the caller of the function
+  contract.events.NewValueSet({}, (error, event) => {
+    console.log('New value set = ', event)
+  })
+  .on('error',console.error)// The address for the caller of the function
 }
 
 main();
